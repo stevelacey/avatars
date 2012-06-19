@@ -24,7 +24,7 @@ if ($username && $size && preg_match('/^[A-Za-z0-9_]+$/', $username) && in_array
       $mime = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
       $length = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
 
-      if (!is_dir($cache)) {
+      if (!is_dir(dirname($cache))) {
         mkdir(dirname($cache), 0755, true);
       }
 
