@@ -8,4 +8,4 @@ The script caches images and sets some sensible headers when serving them, if yo
 
  /username
 
- /username/[bigger,normal,mini,original]
+ /username/?size={400x400,bigger,normal,mini,original}
