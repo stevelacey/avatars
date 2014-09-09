@@ -1,60 +1,23 @@
 <?php
 
-$uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
+$username = preg_replace('#^/([A-Za-z0-9_]{1,15}).*#', '$1', $_SERVER['REQUEST_URI']);
+$size = isset($_GET['size']) ? $_GET['size'] : 'normal';
 
-$username = isset($uri[0]) ? $uri[0] : false;
-$size = isset($uri[1]) ? $uri[1] : 'normal';
+$sizes = ['400x400', 'bigger', 'normal', 'mini', 'original'];
 
-$image = false;
+if ($username && in_array($size, $sizes)) {
+    $profile = file_get_contents("https://twitter.com/${username}");
 
-if ($username && $size && preg_match('/^[A-Za-z0-9_]+$/', $username) && in_array($size, array('bigger', 'normal', 'mini', 'original'))) {
+    if (preg_match('#[^"]+profile_images[^"]+#', $profile, $matches)) {
+        $uri = current($matches);
 
-  $cache = __DIR__ . '/cache/'.$username.'/'.$size;
+        if ($size != 'original') {
+            $uri = preg_replace('#(.*)\.(.*)#', "$1_${size}.$2", $uri);
+        }
 
-  if (!file_exists($cache) || filemtime($cache) < strtotime('yesterday')) {
-
-    $ch = curl_init('https://api.twitter.com/1/users/profile_image?screen_name='.$username.'&size='.$size); 
-
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-    $response = curl_exec($ch); 
-
-    if (curl_getinfo($ch, CURLINFO_HTTP_CODE) == 200) {
-      $mime = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-      $length = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
-
-      if (!is_dir(dirname($cache))) {
-        mkdir(dirname($cache), 0755, true);
-      }
-
-      $image = $response;
-
-      $file = fopen($cache, 'w');
-      fwrite($file, $image);
-      fclose($file);
+        header("Location: ${uri}", true, 302);
     }
-  } else {
-    $file = fopen($cache, 'r');
-    $image = fread($file, filesize($cache));
-    fclose($file);
-
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-
-    $mime = finfo_file($finfo, $cache);
-    $length = strlen($image);
-
-    finfo_close($finfo);
-  }
-}
-
-if ($image) {
-  header('Expires: '.gmdate('D, d M Y H:i:s T', strtotime('+1 Week', filemtime($cache))));
-  header('Last-Modified: '.gmdate('D, d M Y H:i:s T', filemtime($cache)));
-  header('Content-type: '.$mime);
-  header('Content-length: '.$length);
-
-  echo $image;
 } else {
-  header('HTTP/1.0 404 Not Found');
+    header('HTTP/1.1 404 Not Found');
 }
+
