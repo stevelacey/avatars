@@ -1,11 +1,11 @@
-# A simple tweetimag.es clone writen in PHP
+# Avatars
 
-Tweetimag.es seems to be constantly broken, I figured they're having issues scaling, so I wrote my own.
-
-The script caches images and sets some sensible headers when serving them, if you intend to use this for anything serious I'd recommend throwing Amazon CloudFront or a similar CDN in front of it.
+A pretty basic replacement for Twitter's `GET users/profile_image/:screen_name`,
+stick this in front of Varnish and it'll cache and serve 302's to Twitter avatar
+URI's.
 
 ## Examples
 
- /username
+    /twitter/screen_name
 
- /username?size={400x400,bigger,normal,mini,original}
+    /twitter/screen_name?size={400x400,bigger,normal,mini,original}
