@@ -1,7 +1,7 @@
 # Avatars
 
 A pretty basic replacement for Twitter's `GET users/profile_image/:screen_name`,
-stick this in front of Varnish and it'll cache and serve 302's to Twitter avatar
+stick this behind Varnish and it'll cache and serve 302's to Twitter avatar
 URI's.
 
 http://avatars.stevelacey.net/twitter/SirPatStew?size=original
