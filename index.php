@@ -4,8 +4,8 @@ if (preg_match('#^/(\w+)/([A-Za-z0-9_]{1,15})#', $_SERVER['REQUEST_URI'], $match
     list($uri, $network, $username) = $matches;
     $size = isset($_GET['size']) ? $_GET['size'] : 'normal';
 
-    $networks = ['twitter'];
-    $sizes = ['400x400', 'bigger', 'normal', 'mini', 'original'];
+    $networks = array('twitter');
+    $sizes = array('400x400', 'bigger', 'normal', 'mini', 'original');
 
     if ($username && in_array($network, $networks) && in_array($size, $sizes)) {
         $profile = file_get_contents("https://twitter.com/${username}");
