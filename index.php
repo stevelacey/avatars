@@ -23,11 +23,11 @@ try {
 
     $profile = file_get_contents("https://twitter.com/{$username}");
 
-    if (!preg_match('#[^"]+profile_images[^"]+#', $profile, $matches)) {
+    if (!preg_match('#src=\"([^"]+profile_images[^"]+)\"#', $profile, $matches)) {
         throw new AvatarNotFoundException();
     }
 
-    $avatar = current($matches);
+    $avatar = $matches[1];
 
     if ($size != 'original') {
         $avatar = preg_replace('#(.*)\.(.*)#', "$1_{$size}.$2", $avatar);
